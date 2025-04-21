@@ -44,7 +44,7 @@ func main() {
 		}, 10)
 
 		// Start 10 goroutines to fetch data
-		for i := 0; i < 5; i++ {
+		for i := 0; i < 50; i++ {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
