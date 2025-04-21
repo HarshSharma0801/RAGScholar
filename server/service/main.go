@@ -13,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/google/generative-ai-go/genai"
 	"github.com/qdrant/go-client/qdrant"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -73,6 +74,13 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
 
 	router.GET("/data", func(ctx *gin.Context) {
 		var wg sync.WaitGroup
@@ -163,7 +171,7 @@ func main() {
 		// Perform similarity search to find related papers
 		collectionName := "papers"
 		limit := uint64(5) // Get top 5 papers as requested
-		
+
 		relatedPapers, err := search.SimilaritySearch(context.Background(), qDrantclient, collectionName, searchQuery, limit)
 		if err != nil {
 			log.Printf("Failed to perform similarity search: %v", err)

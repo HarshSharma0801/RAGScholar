@@ -13,7 +13,6 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// GenerateEmbedding creates an embedding vector for the given text using Gemini API
 func GenerateEmbedding(client *genai.Client, model *genai.EmbeddingModel, text string, limiter *rate.Limiter) ([]float32, error) {
 	ctx := context.Background()
 
@@ -40,14 +39,12 @@ func GenerateEmbedding(client *genai.Client, model *genai.EmbeddingModel, text s
 	return embedding, nil
 }
 
-// SimilaritySearch retrieves papers and ranks them based on relevance to the query text
 func SimilaritySearch(ctx context.Context, client *qdrant.Client, collectionName string, 
 	queryText string, limit uint64) ([]structure.SimplifiedEntry, error) {
 	
-	// First, fetch papers using the existing Query method
 	points, err := client.Query(ctx, &qdrant.QueryPoints{
 		CollectionName: collectionName,
-		Query:          nil, // No query filter to get a diverse set of papers
+		Query:          nil, 
 		Limit:          &limit,
 		WithPayload:    &qdrant.WithPayloadSelector{SelectorOptions: &qdrant.WithPayloadSelector_Enable{Enable: true}},
 	})
@@ -95,7 +92,6 @@ func SimilaritySearch(ctx context.Context, client *qdrant.Client, collectionName
 	return papers, nil
 }
 
-// calculateRelevanceScore computes a simple text-based relevance score
 func calculateRelevanceScore(paper structure.SimplifiedEntry, queryText string) float32 {
 	queryLower := strings.ToLower(queryText)
 	titleLower := strings.ToLower(paper.Title)
@@ -103,12 +99,10 @@ func calculateRelevanceScore(paper structure.SimplifiedEntry, queryText string) 
 	
 	var score float32 = 0
 	
-	// Check title for query terms
 	if strings.Contains(titleLower, queryLower) {
 		score += 10.0 // High weight for title matches
 	}
 	
-	// Check summary for query terms
 	if strings.Contains(summaryLower, queryLower) {
 		score += 5.0 // Medium weight for summary matches
 	}
