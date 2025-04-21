@@ -2,16 +2,22 @@ package worker
 
 import (
 	structure "RAGScholar/service/structure"
+	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/google/generative-ai-go/genai"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"golang.org/x/time/rate"
 )
 
 // PublishToQueue publishes JSON data to the specified RabbitMQ queue
@@ -87,3 +93,32 @@ func GetData(topics []string) ([]structure.SimplifiedEntry, []byte, error) {
 	return simplifiedEntries, jsonData, nil
 }
 
+func GenerateEmbedding(client *genai.Client, model *genai.EmbeddingModel, text string, limiter *rate.Limiter) ([]float32, error) {
+	ctx := context.Background()
+
+	if err := limiter.Wait(ctx); err != nil {
+		return nil, err
+	}
+
+	if strings.TrimSpace(text) == "" {
+		return nil, fmt.Errorf("cannot generate embedding for empty text")
+	}
+
+	resp, err := model.EmbedContent(ctx, genai.Text(text))
+	if err != nil {
+		return nil, err
+	}
+
+	if len(resp.Embedding.Values) == 0 {
+		return nil, fmt.Errorf("received empty embedding from Gemini")
+	}
+
+	embedding := make([]float32, len(resp.Embedding.Values))
+	for i, v := range resp.Embedding.Values {
+		embedding[i] = float32(v)
+	}
+
+	log.Printf("Generated embedding with size: %d", len(embedding))
+
+	return embedding, nil
+}

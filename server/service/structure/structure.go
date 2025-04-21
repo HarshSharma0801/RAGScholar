@@ -54,6 +54,7 @@ type SimplifiedEntry struct {
 	Categories      []string `json:"categories"`
 	DOI             string   `json:"doi"`
 	JournalRef      string   `json:"journalRef"`
+	Score           float32  `json:"score,omitempty"`
 }
 
 var Topics = []string{
