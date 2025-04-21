@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/qdrant/go-client v1.13.0
 	github.com/rabbitmq/amqp091-go v1.10.0
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
 	golang.org/x/time v0.11.0
 	google.golang.org/api v0.229.0
 )

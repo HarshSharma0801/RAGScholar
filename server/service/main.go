@@ -1,14 +1,19 @@
 package main
 
 import (
+	"RAGScholar/service/paper"
 	"RAGScholar/service/structure"
 	"RAGScholar/service/worker"
+	"context"
 	"log"
 	"net/http"
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/generative-ai-go/genai"
+	"github.com/qdrant/go-client/qdrant"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"google.golang.org/api/option"
 )
 
 const queueName = "paper-fetcher"
@@ -33,9 +38,34 @@ func main() {
 
 	log.Print("Connected With Producer RabbitMQ!")
 
+	ctx := context.Background()
+	geminiAPIKey := "AIzaSyCwMtDVOhs6n9x2MdcwmRFiieoBGKIrGVU"
+	if geminiAPIKey == "" {
+		log.Fatal("GEMINI_API_KEY environment variable not set")
+	}
+
+	geminiClient, err := genai.NewClient(ctx, option.WithAPIKey(geminiAPIKey))
+	if err != nil {
+		log.Fatalf("Failed to create Gemini client: %v", err)
+	}
+	defer geminiClient.Close()
+
+	log.Print("Connected With Gemini Client!")
+
+	qDrantclient, err := qdrant.NewClient(&qdrant.Config{
+		Host: "localhost",
+		Port: 6334,
+	})
+	if err != nil {
+		log.Fatalf("failed to create Qdrant client: %v", err)
+	}
+	defer qDrantclient.Close()
+
+	log.Print("Connected With Qdrant Client!")
+
 	router := gin.Default()
 
-	router.GET("/", func(ctx *gin.Context) {
+	router.GET("/data", func(ctx *gin.Context) {
 		var wg sync.WaitGroup
 		dataChan := make(chan struct {
 			entries []structure.SimplifiedEntry
@@ -83,5 +113,25 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"message": "Published all messages to RabbitMQ", "total_entries": len(allEntries)})
 	})
 
+	router.GET("/check", func(ctx *gin.Context) {
+
+		ctx.JSON(http.StatusOK, gin.H{"message": "Welcome to RAGScholar API!"})
+
+	})
+
+	router.GET("/", func(ctx *gin.Context) {
+		collectionName := "papers"
+		limit := uint64(10)
+
+		papers, err := paper.FetchRandomPapers(context.Background(), qDrantclient, collectionName, limit)
+		if err != nil {
+			log.Printf("Failed to fetch random papers: %v", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch papers"})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"papers": papers})
+	})
 	log.Fatal(router.Run(":8040"))
 }
+

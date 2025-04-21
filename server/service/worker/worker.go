@@ -11,7 +11,6 @@ import (
 	"net/url"
 	"strconv"
 	"time"
-
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -87,3 +86,4 @@ func GetData(topics []string) ([]structure.SimplifiedEntry, []byte, error) {
 
 	return simplifiedEntries, jsonData, nil
 }
+
