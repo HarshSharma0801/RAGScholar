@@ -114,3 +114,67 @@ func getStructString(structVal *qdrant.Struct, key string) string {
 	}
 	return ""
 }
+
+type Paper struct {
+	ID              string             `json:"id"`
+	Updated         string             `json:"updated"`
+	Published       string             `json:"published"`
+	Title           string             `json:"title"`
+	Summary         string             `json:"summary"`
+	Authors         []structure.Author `json:"authors"`
+	Comment         string             `json:"comment"`
+	Links           []structure.Link   `json:"links"`
+	PrimaryCategory string             `json:"primaryCategory"`
+	Categories      []string           `json:"categories"`
+	DOI             string             `json:"doi"`
+	JournalRef      string             `json:"journalRef"`
+}
+
+func FetchPaperByID(ctx context.Context, client *qdrant.Client, collectionName, paperID string) (*Paper, error) {
+	points, err := client.Query(ctx, &qdrant.QueryPoints{
+		CollectionName: collectionName,
+		Filter: &qdrant.Filter{
+			Must: []*qdrant.Condition{
+				{
+					ConditionOneOf: &qdrant.Condition_Field{
+						Field: &qdrant.FieldCondition{
+							Key: "id",
+							Match: &qdrant.Match{
+								MatchValue: &qdrant.Match_Text{
+									Text: paperID,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		WithPayload: &qdrant.WithPayloadSelector{SelectorOptions: &qdrant.WithPayloadSelector_Enable{Enable: true}},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to query Qdrant: %v", err)
+	}
+
+	if len(points) == 0 {
+		return nil, fmt.Errorf("paper with ID %s not found", paperID)
+	}
+
+	payload := points[0].Payload
+	paper := &Paper{
+		ID:              getStringFromPayload(payload, "id"),
+		Updated:         getStringFromPayload(payload, "updated"),
+		Published:       getStringFromPayload(payload, "published"),
+		Title:           getStringFromPayload(payload, "title"),
+		Summary:         getStringFromPayload(payload, "summary"),
+		Authors:         getAuthorsFromPayload(payload, "authors"),
+		Comment:         getStringFromPayload(payload, "comment"),
+		Links:           getLinksFromPayload(payload, "links"),
+		PrimaryCategory: getStringFromPayload(payload, "primaryCategory"),
+		Categories:      getStringListFromPayload(payload, "categories"),
+		DOI:             getStringFromPayload(payload, "doi"),
+		JournalRef:      getStringFromPayload(payload, "journalRef"),
+	}
+
+	return paper, nil
+}
+

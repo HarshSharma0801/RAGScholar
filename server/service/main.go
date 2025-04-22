@@ -12,8 +12,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
 	"github.com/qdrant/go-client/qdrant"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -146,6 +146,22 @@ func main() {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"papers": papers})
+	})
+
+	// New route for fetching a paper by ID
+	router.GET("/paper/:id", func(ctx *gin.Context) {
+		paperID := ctx.Param("id")
+		collectionName := "papers"
+
+		// Query Qdrant for the paper by ID
+		paper, err := paper.FetchPaperByID(context.Background(), qDrantclient, collectionName, paperID)
+		if err != nil {
+			log.Printf("Failed to fetch paper with ID %s: %v", paperID, err)
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "Paper not found"})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"paper": paper})
 	})
 
 	// New route for analyzing selected text and finding related papers

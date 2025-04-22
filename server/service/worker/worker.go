@@ -122,3 +122,5 @@ func GenerateEmbedding(client *genai.Client, model *genai.EmbeddingModel, text s
 
 	return embedding, nil
 }
+
+
