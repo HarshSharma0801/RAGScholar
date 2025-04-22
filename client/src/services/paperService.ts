@@ -1,15 +1,53 @@
-import axios from 'axios';
-import { Paper } from '@/types/paper';
+import axios from "axios";
+import { Paper } from "@/types/paper";
 
-const API_URL = 'http://localhost:8040';
+const API_URL = "http://localhost:8040";
 
-export const fetchRandomPapers = async (count: number = 10): Promise<Paper[]> => {
+
+interface Author {
+  Name: string;
+}
+
+export interface PaperById {
+  id: string;
+  title: string;
+  summary: string;
+  authors: Author[];
+  published: string;
+  updated: string;
+  comment?: string;
+  links: {
+    Href: string;
+    Rel: string;
+    Type: string;
+  }[];
+  categories?: string[];
+  journalRef?: string;
+}
+
+
+export const fetchRandomPapers = async (
+  count: number = 10
+): Promise<Paper[]> => {
   try {
     const response = await axios.get(`${API_URL}/`);
-    return response.data.papers
+    return response.data.papers;
   } catch (error) {
-    console.error('Error fetching random papers:', error);
+    console.error("Error fetching random papers:", error);
     return [];
+  }
+};
+
+export const fetchPaperById = async (id: string): Promise<PaperById | null> => {
+  try {
+    const response = await axios.get(`${API_URL}/paper/${id}`);
+    if (response.data) {
+      return response.data.paper;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching random papers:", error);
+    return null;
   }
 };
 
@@ -17,13 +55,13 @@ export const searchPapers = async (query: string): Promise<Paper[]> => {
   try {
     const response = await axios.post(`${API_URL}/analyze`, {
       searchQuery: query,
-      selectedText: '',
-      paperContext: '',
-      customPrompt: '',
+      selectedText: "",
+      paperContext: "",
+      customPrompt: "",
     });
     return response.data;
   } catch (error) {
-    console.error('Error searching papers:', error);
+    console.error("Error searching papers:", error);
     return [];
   }
 };
@@ -38,7 +76,7 @@ export const analyzePaper = async (params: {
     const response = await axios.post(`${API_URL}/analyze`, params);
     return response.data;
   } catch (error) {
-    console.error('Error analyzing paper:', error);
+    console.error("Error analyzing paper:", error);
     throw error;
   }
 };
