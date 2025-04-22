@@ -2,31 +2,15 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { analyzePaper } from '@/services/paperService';
 
-interface SearchBarProps {
-  paperContext?: string;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ paperContext }) => {
+const SearchBarHome: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!searchQuery.trim()) return;
-    
-    try {
-    
-      // If on the home page, redirect to search results
-      if (!paperContext) {
-        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-      }
-      // If on a paper page, results will be handled by the parent component
-    } catch (error) {
-      console.error('Search error:', error);
-    }
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
   return (
@@ -43,4 +27,4 @@ const SearchBar: React.FC<SearchBarProps> = ({ paperContext }) => {
   );
 };
 
-export default SearchBar;
+export default SearchBarHome;

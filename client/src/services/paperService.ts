@@ -51,21 +51,6 @@ export const fetchPaperById = async (id: string): Promise<PaperById | null> => {
   }
 };
 
-export const searchPapers = async (query: string): Promise<Paper[]> => {
-  try {
-    const response = await axios.post(`${API_URL}/analyze`, {
-      searchQuery: query,
-      selectedText: "",
-      paperContext: "",
-      customPrompt: "",
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error searching papers:", error);
-    return [];
-  }
-};
-
 export const analyzePaper = async (params: {
   selectedText?: string;
   paperContext?: string;

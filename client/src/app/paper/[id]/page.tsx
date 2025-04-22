@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { fetchPaperById, PaperById } from "@/services/paperService";
 import { format } from "date-fns";
 import { ExternalLink, FileText } from "lucide-react";
+import SearchBarPaper from '@/components/SearchBarPaper';
 
 export default function PaperPage() {
   const params = useParams();
@@ -89,11 +90,11 @@ export default function PaperPage() {
 
   return (
     <Layout>
+      <SearchBarPaper paperContext={paper.title} />
       <div className="space-y-6 max-w-4xl mx-auto">
         <Card className="border-none shadow-none">
           <CardHeader className="pb-2">
             <CardTitle className="text-2xl font-bold">{paper.title}</CardTitle>
-            <CardDescription className="space-y-1">
               <div className="flex flex-wrap gap-x-2">
                 {paper.authors.map((author, index) => (
                   <span key={index}>
@@ -110,7 +111,6 @@ export default function PaperPage() {
                   arXiv: {arxivId}
                 </div>
               )}
-            </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">

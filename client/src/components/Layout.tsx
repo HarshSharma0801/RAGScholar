@@ -1,6 +1,6 @@
-import React from 'react';
-import SearchBar from './SearchBar';
-import Link from 'next/link';
+import React from "react";
+import SearchBar from "./SearchBar";
+import Link from "next/link";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,13 +18,10 @@ const Layout: React.FC<LayoutProps> = ({ children, paperContext }) => {
                 RAGScholar
               </Link>
             </div>
-            <SearchBar paperContext={paperContext} />
           </div>
         </div>
       </header>
-      <main className="container mx-auto py-6">
-        {children}
-      </main>
+      <main className="container mx-auto py-6">{children}</main>
     </div>
   );
 };
