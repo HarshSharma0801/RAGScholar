@@ -6,7 +6,8 @@ RAGScholar is a research paper search and analysis platform that leverages moder
 
 ## Architecture Overview
 
-![System Architecture](docs/architecture.png)
+<img width="1154" alt="Screenshot 2025-04-22 at 11 29 24 PM" src="https://github.com/user-attachments/assets/8466b8bc-2445-4a23-9bd6-92c805a74202" />
+
 
 - **Frontend (client/):** Next.js app with TypeScript, Tailwind CSS, and shadcn/ui. Provides search, paper detail, and context-aware search UI.
 - **Service (server/service):** Main backend API. Handles search requests, fetches from Arxiv DB, and coordinates Gemini LLM for explanations. Publishes tasks to RabbitMQ for concurrent processing.
