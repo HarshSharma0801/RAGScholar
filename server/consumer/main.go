@@ -107,7 +107,7 @@ func main() {
 	limiter := rate.NewLimiter(rate.Every(time.Minute/60), 1)
 
 	// Worker pool
-	const numWorkers = 4 
+	const numWorkers = 10 
 	taskChan := make(chan []structure.SimplifiedEntry, 10)
 	var wg sync.WaitGroup
 
