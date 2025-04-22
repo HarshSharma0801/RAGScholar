@@ -4,6 +4,27 @@ RAGScholar is a research paper search and analysis platform that leverages moder
 
 ---
 
+
+## Video
+
+
+
+https://github.com/user-attachments/assets/4713cef6-59e9-47d4-a821-c952de3421b7
+
+
+
+## Screenshots
+
+<img width="1452" alt="Screenshot 2025-04-22 at 11 02 16 PM" src="https://github.com/user-attachments/assets/7f730227-070d-42d4-a95e-953a73248929" />
+
+<img width="1452" alt="Screenshot 2025-04-22 at 11 02 14 PM" src="https://github.com/user-attachments/assets/e9a73085-af31-4e1f-ba3d-73c8479ab791" />
+
+<img width="1452" alt="Screenshot 2025-04-22 at 11 01 41 PM" src="https://github.com/user-attachments/assets/7b53758c-2baf-45a2-8dbb-1ff0a566e5c2" />
+
+<img width="1452" alt="Screenshot 2025-04-22 at 11 01 33 PM" src="https://github.com/user-attachments/assets/f7c18e8b-5c38-4d73-a9cb-0589e03a3311" />
+
+
+
 ## Architecture Overview
 
 <img width="1154" alt="Screenshot 2025-04-22 at 11 29 24 PM" src="https://github.com/user-attachments/assets/8466b8bc-2445-4a23-9bd6-92c805a74202" />
