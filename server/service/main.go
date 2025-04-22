@@ -172,12 +172,6 @@ func main() {
 			return
 		}
 
-		// Validate request
-		if request.SelectedText == "" {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Selected text is required"})
-			return
-		}
-
 		// Use search query if provided, otherwise use selected text
 		searchQuery := request.SearchQuery
 		if searchQuery == "" {
@@ -202,7 +196,13 @@ func main() {
 			textExplanation, err = explanation.CustomExplainText(context.Background(), geminiClient, request.SelectedText, request.PaperContext, request.CustomPrompt)
 		} else {
 			// Use default prompt
-			textExplanation, err = explanation.ExplainText(context.Background(), geminiClient, request.SelectedText, request.PaperContext)
+			if request.PaperContext != "" {
+				textExplanation, err = explanation.ExplainText(context.Background(), geminiClient, request.SelectedText, request.PaperContext)
+
+			} else {
+				textExplanation = ""
+			}
+
 		}
 
 		if err != nil {
