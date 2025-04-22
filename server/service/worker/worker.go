@@ -42,7 +42,7 @@ func GetData(topics []string) ([]structure.SimplifiedEntry, []byte, error) {
 	start := rng.Intn(200) + 1
 	log.Printf("Selected Topic and Start: %s\n , %v", topic, start)
 
-	queryURL := "http://export.arxiv.org/api/query?search_query=" + url.QueryEscape(topic) + "&max_results=5&start=" + url.QueryEscape(strconv.Itoa(start))
+	queryURL := "http://export.arxiv.org/api/query?search_query=" + url.QueryEscape(topic) + "&max_results=10&start=" + url.QueryEscape(strconv.Itoa(start))
 
 	res, err := http.Get(queryURL)
 	if err != nil {
